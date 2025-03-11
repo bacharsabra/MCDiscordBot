@@ -23,24 +23,23 @@ async def check_server_status():
     channel = client.get_channel(CHANNEL_ID)
 
     while not client.is_closed():
-        print(f"🔄 Checking server: {MC_SERVER}:{MC_PORT}")
         try:
+            print(f"🔄 Checking server: {MC_SERVER}:{MC_PORT}")
             server = JavaServer.lookup(f"{MC_SERVER}:{MC_PORT}")
             status = server.status()
-            print("Server status details:")
             pprint(vars(status))
-            if status.version.protocol == 762:
+            if status.version.protocol == -1:
+                online = False
+                print("❌ Server is OFF")
+            else:
                 online = True
                 print("✅ Server is ONLINE")
-            else:
-                online = False
-                print("❌ Server is OFFLINE")
         except Exception as e:
             online = False
-            print(f"❌ Error checking server status: {e}")
+            print(f"❌ Server is OFFLINE. Error: {e}")
 
-        if online and not last_status:
-            await channel.send(f"💡 Dar lserver! {status.players.online}/{status.players.max} players online.")
+        if online and last_status is False:
+            await channel.send("💡 Dar lserver!")
             last_status = True
         elif not online:
             last_status = False
@@ -50,8 +49,14 @@ async def check_server_status():
 
 @client.event
 async def on_ready():
-    print(f"Logged in as {client.user}")
-    client.get_channel(CHANNEL_ID)
+    print(f'Logged in as {client.user}')
+    channel = client.get_channel(CHANNEL_ID)
+    if channel is None:
+        print("❌ ERROR: Channel not found! Check CHANNEL_ID and bot permissions.")
+    else:
+        print("✅ Bot is ready and monitoring the server!")
+
+    # Check server status
     client.loop.create_task(check_server_status())
 
 client.run(TOKEN)
