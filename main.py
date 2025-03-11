@@ -28,10 +28,6 @@ async def check_server_status():
             server = JavaServer.lookup(f"{MC_SERVER}:{MC_PORT}")
             status = server.status()
             pprint(vars(status))
-            print("LTENYE:")
-            for attribute in dir(status):
-                value = getattr(status, attribute)
-                print(f"{attribute}: {value}")
             if hasattr(status, 'version') and status.version.get('name'):
                 online = True
                 print("✅ Server is ONLINE")
