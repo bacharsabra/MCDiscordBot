@@ -34,6 +34,7 @@ async def check_server_status():
 
         if online and last_status is False:
             await channel.send("💡 Dar lserver!")
+            await asyncio.sleep(5)
             last_status = True
         elif not online:
             last_status = False
