@@ -3,6 +3,7 @@ import os
 import asyncio
 from mcstatus import JavaServer
 from dotenv import load_dotenv
+from pprint import pprint
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
