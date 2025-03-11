@@ -26,7 +26,7 @@ async def check_server_status():
             print(f"🔄 Checking server: {MC_SERVER}:{MC_PORT}")
             server = JavaServer.lookup(f"{MC_SERVER}:{MC_PORT}")
             status = server.status()
-            online = status is not None
+            online = status.latency > 0
             if online:
                 print("✅ Server is ONLINE")
             else:
