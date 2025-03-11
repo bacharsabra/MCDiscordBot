@@ -28,7 +28,10 @@ async def check_server_status():
             data = response.json()
             print(f"🔎 API Response: {data}")
             online = data.get("online", False)
-            print("✅ Server is ONLINE")
+            if online:
+                print("✅ Server is ONLINE")
+            else:
+                print("❌ Server is OFF")
         except Exception as e:
             online = False
             print(f"❌ Server is OFFLINE. Error: {e}")
