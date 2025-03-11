@@ -1,7 +1,7 @@
 import discord
 import os
 import asyncio
-import requests
+from mcstatus import JavaServer
 from dotenv import load_dotenv
 
 load_dotenv()
