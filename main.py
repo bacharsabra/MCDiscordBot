@@ -1,8 +1,8 @@
 import discord
 import os
 import asyncio
+import requests
 from dotenv import load_dotenv
-from mcstatus import JavaServer
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
@@ -24,9 +24,9 @@ async def check_server_status():
     while not client.is_closed():
         try:
             print(f"🔄 Checking server: {MC_SERVER}:{MC_PORT}")
-            server = JavaServer.lookup(f"{MC_SERVER}:{MC_PORT}")
-            server.status()
-            online = True
+            response = requests.get(f"https://api.mcsrvstat.us/2/{MC_SERVER}")
+            data = response.json()
+            online = data.get("online", False)
             print("✅ Server is ONLINE")
         except Exception as e:
             online = False
