@@ -23,19 +23,21 @@ async def check_server_status():
 
     while not client.is_closed():
         try:
-            print(f"🔄 Checking server: {MC_SERVER}:{MC_PORT}")  # Debugging
+            print(f"🔄 Checking server: {MC_SERVER}:{MC_PORT}")
             server = JavaServer.lookup(f"{MC_SERVER}:{MC_PORT}")
             server.status()
             online = True
-            print("✅ Server is ONLINE") # Debugging
+            print("✅ Server is ONLINE")
         except Exception as e:
             online = False
-            print(f"❌ Server is OFFLINE. Error: {e}")  # Debugging
+            print(f"❌ Server is OFFLINE. Error: {e}")
 
         if online and last_status is False:
-            await channel.send("Ollline")
+            await channel.send("💡 Dar lserver!")
+            last_status = True
+        elif not online:
+            last_status = False
 
-        last_status = online
         await asyncio.sleep(30)
 
 
