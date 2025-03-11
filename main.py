@@ -26,6 +26,7 @@ async def check_server_status():
             print(f"🔄 Checking server: {MC_SERVER}:{MC_PORT}")
             response = requests.get(f"https://api.mcsrvstat.us/2/{MC_SERVER}")
             data = response.json()
+            print(f"🔎 API Response: {data}")
             online = data.get("online", False)
             print("✅ Server is ONLINE")
         except Exception as e:
