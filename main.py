@@ -22,6 +22,7 @@ async def check_server_status():
     global last_status
     await client.wait_until_ready()
     channel = client.get_channel(CHANNEL_ID)
+    check_interval = 30 # change to 60
 
     while not client.is_closed():
         try:
@@ -32,6 +33,8 @@ async def check_server_status():
             online = status.version.protocol == 769
             if online:
                 print("✅ Server is ONLINE")
+                if last_status is False:
+                    check_interval = 5
             else:
                 print("❌ Server is OFFLINE")
         except Exception as e:
@@ -39,12 +42,14 @@ async def check_server_status():
             print(f"❌ No connection: {e}")
 
         if online and last_status is False:
+            check_interval = 60
             await channel.send(f"💡 Dar lserver! {status.players.online}/{status.players.max} players online.") #add @everyone later
             last_status = True
         elif not online:
+            check_interval = 30
             last_status = False
 
-        await asyncio.sleep(30)
+        await asyncio.sleep(check_interval)
 
 @tree.command(name="mcstatus", description="Check if the server is online")
 async def mcstatus_command(interaction: discord.Interaction):
