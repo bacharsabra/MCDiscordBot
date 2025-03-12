@@ -39,7 +39,7 @@ async def check_server_status():
             print(f"❌ No connection: {e}")
 
         if online and last_status is False:
-            await channel.send(f"💡 Dar lserver! {status.players.online}/{status.players.max} players online.")
+            await channel.send(f"💡 Dar lserver! {status.players.online}/{status.players.max} players online. @everyone")
             last_status = True
         elif not online:
             last_status = False
