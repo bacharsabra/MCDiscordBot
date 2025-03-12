@@ -14,6 +14,7 @@ MC_PORT = int(os.getenv("MC_PORT"))
 # Create bot instance
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
+tree = discord.app_commands.CommandTree(client)
 
 last_status = False
 
@@ -27,13 +28,15 @@ async def check_server_status():
             print(f"🔄 Checking server: {MC_SERVER}:{MC_PORT}")
             server = JavaServer.lookup(f"{MC_SERVER}:{MC_PORT}")
             status = server.status()
-            if status.version.protocol == 769:
-                online = True
+            pprint(vars(status))
+            online = status.version.protocol == 769
+            if online:
+                print("✅ Server is ONLINE")
             else:
-                online = False
+                print("❌ Server is OFFLINE")
         except Exception as e:
             online = False
-            print(f"❌ Error: {e}")
+            print(f"❌ No connection: {e}")
 
         if online and last_status is False:
             await channel.send(f"💡 Dar lserver! {status.players.online}/{status.players.max} players online.")
@@ -42,10 +45,23 @@ async def check_server_status():
             last_status = False
 
         await asyncio.sleep(30)
-
+@tree.command(name="mcstatus", description="Check if the server is online")
+async def mcstatus_command(interaction: discord.Interaction):
+    try:
+        server = JavaServer.lookup(f"{MC_SERVER}:{MC_PORT}")
+        status = server.status()
+        online = status.version.protocol == 769
+        if online:
+            response = f"✅ **Online**\n👥 Players: {status.players.online}/{status.players.max}"
+        else:
+            response = f"⛔ **Offline**"
+    except Exception as e:
+            response = f"⚠️ **Error checking server status:** {e}"
+    await interaction.response.send_message(response)
 
 @client.event
 async def on_ready():
+    await tree.sync()
     client.get_channel(CHANNEL_ID)
     client.loop.create_task(check_server_status())
 
