@@ -28,12 +28,12 @@ async def check_server_status():
             server = JavaServer.lookup(f"{MC_SERVER}:{MC_PORT}")
             status = server.status()
             pprint(vars(status))
-            if status.version.protocol == -1:
-                online = False
-                print("❌ Server is OFF")
-            else:
+            if status.version.protocol == 762:
                 online = True
                 print("✅ Server is ONLINE")
+            else:
+                online = False
+                print("❌ Server is OFF")
         except Exception as e:
             online = False
             print(f"❌ Server is OFFLINE. Error: {e}")
