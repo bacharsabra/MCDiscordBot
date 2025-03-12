@@ -3,7 +3,6 @@ import os
 import asyncio
 from mcstatus import JavaServer
 from dotenv import load_dotenv
-from pprint import pprint
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
@@ -29,7 +28,6 @@ async def check_server_status():
             print(f"🔄 Checking server: {MC_SERVER}:{MC_PORT}")
             server = JavaServer.lookup(f"{MC_SERVER}:{MC_PORT}")
             status = server.status()
-            pprint(vars(status))
             online = status.version.protocol == 769
             if online:
                 print("✅ Server is ONLINE")
