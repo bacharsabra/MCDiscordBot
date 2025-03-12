@@ -27,19 +27,16 @@ async def check_server_status():
             print(f"🔄 Checking server: {MC_SERVER}:{MC_PORT}")
             server = JavaServer.lookup(f"{MC_SERVER}:{MC_PORT}")
             status = server.status()
-            pprint(vars(status))
-            if status.version.protocol == 762:
+            if status.version.protocol == 769:
                 online = True
-                print("✅ Server is ONLINE")
             else:
                 online = False
-                print("❌ Server is OFF")
         except Exception as e:
             online = False
-            print(f"❌ Server is OFFLINE. Error: {e}")
+            print(f"❌ Error: {e}")
 
         if online and last_status is False:
-            await channel.send("💡 Dar lserver!")
+            await channel.send(f"💡 Dar lserver! {status.players.online}/{status.players.max} players online.")
             last_status = True
         elif not online:
             last_status = False
@@ -49,14 +46,7 @@ async def check_server_status():
 
 @client.event
 async def on_ready():
-    print(f'Logged in as {client.user}')
-    channel = client.get_channel(CHANNEL_ID)
-    if channel is None:
-        print("❌ ERROR: Channel not found! Check CHANNEL_ID and bot permissions.")
-    else:
-        print("✅ Bot is ready and monitoring the server!")
-
-    # Check server status
+    client.get_channel(CHANNEL_ID)
     client.loop.create_task(check_server_status())
 
 client.run(TOKEN)
