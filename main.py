@@ -32,20 +32,20 @@ async def check_server_status():
             if online:
                 print("✅ Server is ONLINE")
                 if last_status is False:
-                    check_interval = 5
+                    await channel.send(f"@everyone 💡 Dar lserver! {status.players.online}/{status.players.max} players online.")
+                    check_interval = 60
             else:
                 print("❌ Server is OFFLINE")
+                if last_status is True:
+                    check_interval = 5
+                else:
+                    check_interval = 30
         except Exception as e:
             online = False
             print(f"❌ No connection: {e}")
-
-        if online and last_status is False:
-            check_interval = 60
-            await channel.send(f"💡 Dar lserver! {status.players.online}/{status.players.max} players online.") #add @everyone later
-            last_status = True
-        elif not online:
             check_interval = 30
-            last_status = False
+
+        last_status = online
 
         await asyncio.sleep(check_interval)
 
