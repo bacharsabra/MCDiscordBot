@@ -45,6 +45,7 @@ async def check_server_status():
             last_status = False
 
         await asyncio.sleep(30)
+
 @tree.command(name="mcstatus", description="Check if the server is online")
 async def mcstatus_command(interaction: discord.Interaction):
     try:
@@ -54,9 +55,27 @@ async def mcstatus_command(interaction: discord.Interaction):
         if online:
             response = f"✅ **Online**\n👥 Players: {status.players.online}/{status.players.max}"
         else:
-            response = f"⛔ **Offline**"
-    except Exception as e:
-            response = f"⚠️ **Error checking server status:** {e}"
+            response = "⛔ **Offline**"
+    except Exception:
+            response = "⚠️ **Server is currently loading or unavailable.**"
+    await interaction.response.send_message(response)
+
+@tree.command(name="mcplayers", description="List all players online")
+async def mcplayers_command(interaction: discord.Interaction):
+    try:
+        server = JavaServer.lookup(f"{MC_SERVER}:{MC_PORT}")
+        status = server.status()
+        online = status.version.protocol == 769
+        if online:
+            if status.players.online > 0:
+                players = "\n".join(status.players.sample)
+                response = f"👥 **Players online**\n{players}"
+            else:
+                response = "🚪 **No players online**"
+        else:
+            response = "⛔ **Server is offline.**"
+    except Exception:
+        response = "⚠️ **Server is currently loading or unavailable.**"
     await interaction.response.send_message(response)
 
 @client.event
