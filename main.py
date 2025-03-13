@@ -79,6 +79,7 @@ async def mcplayers_command(interaction: discord.Interaction):
 @client.event
 async def on_ready():
     await tree.sync()
+    await client.change_presence(activity=discord.CustomActivity(name="🔍 Monitoring the server"))
     client.loop.create_task(check_server_status())
 
 
