@@ -41,8 +41,8 @@ async def check_server_status():
             print("✅ Server is ONLINE")
             if last_status is False:
                 await channel.send(
-                    f"💡 Dar lserver! {status.players.online}/{status.players.max} players online."
-                )  # add @everyone later
+                    f"💡 Dar lserver! {status.players.online}/{status.players.max} players online. @everyone"
+                )
         else:
             print("❌ Server is OFFLINE")
             check_interval = 5 if last_status else 20
@@ -53,11 +53,9 @@ async def check_server_status():
 
 @tree.command(name="mcstatus", description="Check if the server is online")
 async def mcstatus_command(interaction: discord.Interaction):
-    status, online = get_server_status()
+    online = get_server_status()
     if online:
-        response = (
-            f"✅ **Online**\n👥 Players: {status.players.online}/{status.players.max}"
-        )
+        response = "✅ **Online**"
     elif not online:
         response = "⛔ **Offline**"
     else:
@@ -69,9 +67,9 @@ async def mcstatus_command(interaction: discord.Interaction):
 async def mcplayers_command(interaction: discord.Interaction):
     status, online = get_server_status()
     if online:
-        if status.players.online > 0:
-            players = "\n".join(status.players.sample)
-            response = f"👥 **Players online**\n{players}"
+        if status.players.online > 0 and status.players.sample:
+            players = "\n".join([player.name for player in status.players.sample])
+            response = f"👥 **Currently playing:**\n{players}"
         else:
             response = "🚪 **No players online**"
     elif not online:
