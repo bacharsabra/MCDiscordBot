@@ -33,7 +33,7 @@ async def check_server_status():
     global last_status
     await client.wait_until_ready()
     channel = client.get_channel(CHANNEL_ID)
-    check_interval = 45
+    check_interval = 20
 
     while not client.is_closed():
         status, online = get_server_status()
@@ -45,7 +45,7 @@ async def check_server_status():
                 )  # add @everyone later
         else:
             print("❌ Server is OFFLINE")
-            check_interval = 5 if last_status else 45
+            check_interval = 5 if last_status else 20
 
         last_status = online
         await asyncio.sleep(check_interval)
