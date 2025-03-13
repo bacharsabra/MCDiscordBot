@@ -68,11 +68,11 @@ async def mcplayers_command(interaction: discord.Interaction):
     if online:
         if status.players.online > 0 and status.players.sample:
             players = "\n".join([player.name for player in status.players.sample])
-            response = f"👥 **Online Players:\n{players}"
+            response = f"👥 **Online Players:**\n{players}"
         else:
             response = "🚪 **No players online**"
     elif not online:
-        response = "⛔ **Server is offline.**"
+        response = "⛔ **Server is currently offline.**"
     else:
         response = "⚠️ **Server is currently loading or unavailable.**"
     await interaction.response.send_message(response)
