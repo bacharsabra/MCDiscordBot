@@ -36,12 +36,15 @@ async def check_server_status():
     check_interval = 20
 
     while not client.is_closed():
+        print(f"🔄 Checking server: {MC_SERVER}:{MC_PORT}")
         status, online = get_server_status()
         if online:
+            print("✅ Server is ONLINE")
             check_interval = 3600
             if last_status is False:
                 await channel.send("💡 Dar lserver! @everyone")
         else:
+            print("❌ Server is OFFLINE")
             check_interval = 5 if last_status else 20
 
         last_status = online
@@ -78,6 +81,12 @@ async def mcplayers_command(interaction: discord.Interaction):
 
 @client.event
 async def on_ready():
+    print(f'Logged in as {client.user}')
+    channel = client.get_channel(CHANNEL_ID)
+    if channel is None:
+        print("❌ ERROR: Channel not found! Check CHANNEL_ID and bot permissions.")
+    else:
+        print("✅ Bot is ready and monitoring the server!")
     await tree.sync()
     await client.change_presence(activity=discord.CustomActivity(name="🔍 Monitoring the server"))
     client.loop.create_task(check_server_status())
