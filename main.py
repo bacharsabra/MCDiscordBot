@@ -39,7 +39,7 @@ async def check_server_status():
         online = get_server_status()
         if online:
             print("✅ Server is ONLINE")
-            check_interval = 3600
+            check_interval = 60
             if last_status is False:
                 await channel.send("💡 Dar lserver! @everyone")
         else:
