@@ -1,6 +1,7 @@
 import discord
 import os
 import asyncio
+import time
 from mcstatus import JavaServer
 from dotenv import load_dotenv
 
@@ -18,15 +19,24 @@ tree = discord.app_commands.CommandTree(client)
 last_status = False
 
 
+def fetch_server_status():
+    server = JavaServer.lookup(f"{MC_SERVER}:{MC_PORT}")
+    status = server.status()
+    online = status.version.protocol == 769
+    return status, online
+
+
 def get_server_status():
     try:
-        server = JavaServer.lookup(f"{MC_SERVER}:{MC_PORT}")
-        status = server.status()
-        online = status.version.protocol == 769
-        return status, online
+        return fetch_server_status()
     except Exception as e:
-        print(f"❌ No connection: {e}")
-        return None, False
+        print(f"⚠️ Temporary issue checking server: {e}")
+        time.sleep(2)
+        try:
+            return fetch_server_status()
+        except Exception as e:
+            print(f"❌ Server is likely offline: {e}")
+            return None, False
 
 
 async def check_server_status():
@@ -81,14 +91,16 @@ async def mcplayers_command(interaction: discord.Interaction):
 
 @client.event
 async def on_ready():
-    print(f'Logged in as {client.user}')
+    print(f"Logged in as {client.user}")
     channel = client.get_channel(CHANNEL_ID)
     if channel is None:
         print("❌ ERROR: Channel not found! Check CHANNEL_ID and bot permissions.")
     else:
         print("✅ Bot is ready and monitoring the server!")
     await tree.sync()
-    await client.change_presence(activity=discord.CustomActivity(name="🔍 Monitoring the server"))
+    await client.change_presence(
+        activity=discord.CustomActivity(name="🔍 Monitoring the server")
+    )
     client.loop.create_task(check_server_status())
 
 
